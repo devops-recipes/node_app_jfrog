@@ -1,0 +1,72 @@
+# Language setting http://docs.shippable.com/ci/languages/node/
+language: node_js
+
+# Integrations are used to connect external resources to CI
+# http://docs.shippable.com/integrations/overview/
+integrations:
+  # adding JFrog artifactory integration so that credentials are available to CI Job
+  # http://docs.shippable.com/platform/integration/jfrog-artifactoryKey/#jfrog-artifactory-integration
+  hub:
+    - integrationName: drship_artifactory
+      type: artifactory
+
+# use this to control what branches get built.
+# http://docs.shippable.com/ci/advancedOptions/branches/
+branches:
+  only:
+    - master
+
+# using pre-defined build variables
+# full list http://docs.shippable.com/ci/advancedOptions/environmentVariables/
+env:
+  global:
+    - TEST_RESULTS_DIR=$SHIPPABLE_REPO_DIR/shippable/testresults
+    - CODE_COVERAGE_DIR=$SHIPPABLE_REPO_DIR/shippable/codecoverage
+    - TESTS_LOC_DIR=$SHIPPABLE_REPO_DIR/tests
+    - MOD_LOC=$SHIPPABLE_REPO_DIR/node_modules/.bin/
+    - JFROG_ARTIFACTORY_REPO="node_app_jfrog"
+    - JFROG_ARTIFACTORY_ACC=devopsrecipes-node-app-jfrog.jfrog.io # {account name}
+    - SHIP_IMG_RES=$JFROG_ARTIFACTORY_REPO"_img_dh"
+
+build:
+
+  # http://docs.shippable.com/ci/shippableyml/#ci
+  ci:
+    # npm mirrors can sometimes be flacky, better to use shippable_retry
+    # http://docs.shippable.com/ci/advancedOptions/retry/
+    - shipctl retry "npm install"
+    - mkdir -p $TEST_RESULTS_DIR && mkdir -p $CODE_COVERAGE_DIR
+    - pushd $TESTS_LOC_DIR
+    - $MOD_LOC/mocha --recursive "$TESTS_LOC_DIR/**/*.spec.js" -R mocha-junit-reporter --reporter-options mochaFile=$TEST_RESULTS_DIR/testresults.xml
+    - $MOD_LOC/istanbul --include-all-sources cover -root "$SHIPPABLE_REPO_DIR/routes" $SHIPPABLE_REPO_DIR/node_modules/mocha/bin/_mocha -- -R spec-xunit-file --recursive "$TESTS_LOC_DIR/**/*.spec.js"
+    - $MOD_LOC/istanbul report cobertura --dir $CODE_COVERAGE_DIR
+    - popd
+
+  # http://docs.shippable.com/ci/shippableyml/#post_ci
+  post_ci:
+    - docker build -t $JFROG_ARTIFACTORY_ACC/$JFROG_ARTIFACTORY_REPO:$BRANCH.$BUILD_NUMBER .
+    - docker push $JFROG_ARTIFACTORY_ACC/$JFROG_ARTIFACTORY_REPO:$BRANCH.$BUILD_NUMBER
+
+  #this will be ignored if you are not using Assembly Lines to trigger another job after ci
+  on_success:
+    - shipctl put_resource_state $SHIP_IMG_RES versionName $BRANCH.$BUILD_NUMBER
+
+## OPTIONAL : In case you want to use this image in CD Assembly Lines
+resources:
+  - name: node_app_jfrog_img_dh
+    type: image
+    integration: drship_artifactory # replace with your integration name
+    versionTemplate:
+      sourceName: "devopsrecipes-node-app-jfrog.jfrog.io/node_app_jfrog" # replace with your Hub URL
+      isPull: false
+      versionName: latest
+
+jobs:
+  - name: node_app_jfrog_runCI
+    type: runCI
+    dependencyMode: strict
+    triggerMode: parallel
+    steps:
+      - OUT: node_app_jfrog_img_dh
+    flags:
+      - node_app_jfrog
