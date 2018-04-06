@@ -7,8 +7,8 @@ integrations:
   # adding JFrog artifactory integration so that credentials are available to CI Job
   # http://docs.shippable.com/platform/integration/jfrog-artifactoryKey/#jfrog-artifactory-integration
   hub:
-    - integrationName: drship_artifactory
-      type: artifactory
+    - integrationName: drship_artifactory_docker
+      type: dockerRegistryLogin
 
 # use this to control what branches get built.
 # http://docs.shippable.com/ci/advancedOptions/branches/
