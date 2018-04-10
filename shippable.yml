@@ -26,7 +26,7 @@ env:
     - MOD_LOC=$SHIPPABLE_REPO_DIR/node_modules/.bin/
     - JFROG_ARTIFACTORY_REPO="node_app_jfrog"
     - JFROG_ARTIFACTORY_ACC=devopsrecipes-node-app-jfrog.jfrog.io # {account name}
-    - SHIP_IMG_RES=$JFROG_ARTIFACTORY_REPO"_img_dh"
+    - SHIP_IMG_RES=$JFROG_ARTIFACTORY_REPO"_img_jfrog"
 
 build:
 
@@ -53,9 +53,9 @@ build:
 
 ## OPTIONAL : In case you want to use this image in CD Assembly Lines
 resources:
-  - name: node_app_jfrog_img_dh
+  - name: node_app_jfrog_img_jfrog
     type: image
-    integration: drship_artifactory # replace with your integration name
+    integration: drship_artifactory_docker # replace with your integration name
     versionTemplate:
       sourceName: "devopsrecipes-node-app-jfrog.jfrog.io/node_app_jfrog" # replace with your Hub URL
       isPull: false
@@ -67,6 +67,6 @@ jobs:
     dependencyMode: strict
     triggerMode: parallel
     steps:
-      - OUT: node_app_jfrog_img_dh
+      - OUT: node_app_jfrog_img_jfrog
     flags:
       - node_app_jfrog
