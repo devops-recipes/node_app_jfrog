@@ -7,7 +7,7 @@ integrations:
   # adding JFrog artifactory integration so that credentials are available to CI Job
   # http://docs.shippable.com/platform/integration/jfrog-artifactoryKey/#jfrog-artifactory-integration
   hub:
-    - integrationName: drship_artifactory_docker
+    - integrationName: drship_jf_docker
       type: dockerRegistryLogin
 
 # use this to control what branches get built.
@@ -24,12 +24,10 @@ env:
     - CODE_COVERAGE_DIR=$SHIPPABLE_REPO_DIR/shippable/codecoverage
     - TESTS_LOC_DIR=$SHIPPABLE_REPO_DIR/tests
     - MOD_LOC=$SHIPPABLE_REPO_DIR/node_modules/.bin/
-    - JFROG_ARTIFACTORY_REPO="node_app_jfrog"
-    - JFROG_ARTIFACTORY_ACC=devopsrecipes-node-app-jfrog.jfrog.io # {account name}
-    - SHIP_IMG_RES=$JFROG_ARTIFACTORY_REPO"_img_jfrog"
+    - JFROG_ARTIFACTORY_IMG="node_app_jfrog"
+    - JFROG_ARTIFACTORY_REG=devopsrecipes-dr.jfrog.io # {account name}
 
 build:
-
   # http://docs.shippable.com/ci/shippableyml/#ci
   ci:
     # npm mirrors can sometimes be flacky, better to use shippable_retry
@@ -44,21 +42,20 @@ build:
 
   # http://docs.shippable.com/ci/shippableyml/#post_ci
   post_ci:
-    - docker build -t $JFROG_ARTIFACTORY_ACC/$JFROG_ARTIFACTORY_REPO:$BRANCH.$BUILD_NUMBER .
-    - docker push $JFROG_ARTIFACTORY_ACC/$JFROG_ARTIFACTORY_REPO:$BRANCH.$BUILD_NUMBER
+    - docker build -t $JFROG_ARTIFACTORY_REG/$JFROG_ARTIFACTORY_IMG:$BRANCH.$BUILD_NUMBER .
+    - docker push $JFROG_ARTIFACTORY_REG/$JFROG_ARTIFACTORY_IMG:$BRANCH.$BUILD_NUMBER
 
   #this will be ignored if you are not using Assembly Lines to trigger another job after ci
   on_success:
-    - shipctl put_resource_state $SHIP_IMG_RES versionName $BRANCH.$BUILD_NUMBER
+    - shipctl put_resource_state node_app_img_jf versionName $BRANCH.$BUILD_NUMBER
 
 ## OPTIONAL : In case you want to use this image in CD Assembly Lines
 resources:
-  - name: node_app_jfrog_img_jfrog
+  - name: node_app_img_jf
     type: image
-    integration: drship_artifactory_docker # replace with your integration name
+    integration: drship_jf_docker # replace with your integration name
     versionTemplate:
-      sourceName: "devopsrecipes-node-app-jfrog.jfrog.io/node_app_jfrog" # replace with your Hub URL
-      isPull: false
+      sourceName: "devopsrecipes-dr.jfrog.io/node_app_jfrog" # replace with your Hub URL
       versionName: latest
 
 jobs:
@@ -67,6 +64,7 @@ jobs:
     dependencyMode: strict
     triggerMode: parallel
     steps:
-      - OUT: node_app_jfrog_img_jfrog
+      - OUT: node_app_img_jf
     flags:
-      - node_app_jfrog
+      - jfrog
+      - docker
