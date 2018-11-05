@@ -2,26 +2,26 @@ get_max_ver_temp: &get_max_ver
   - |
       BASE_VER=$(shipctl get_resource_version_key base_ver versionName)
       CURR_VER=$(shipctl get_resource_version_key curr_ver versionName)
-      A1="$(cut -d'.' -f1 <<< $BASE_VER )"
-      A2="$(cut -d'.' -f2 <<< $BASE_VER )"
-      A3="$(cut -d'.' -f3 <<< $BASE_VER )"
-      B1="$(cut -d'.' -f1 <<< $CURR_VER )"
-      B2="$(cut -d'.' -f2 <<< $CURR_VER )"
-      B3="$(cut -d'.' -f3 <<< $CURR_VER )"
+      B1="$(cut -d'.' -f1 <<< $BASE_VER )"
+      B2="$(cut -d'.' -f2 <<< $BASE_VER )"
+      B3="$(cut -d'.' -f3 <<< $BASE_VER )"
+      C1="$(cut -d'.' -f1 <<< $CURR_VER )"
+      C2="$(cut -d'.' -f2 <<< $CURR_VER )"
+      C3="$(cut -d'.' -f3 <<< $CURR_VER )"
 
-      if [ $A1 > $B1 ]; then
+      if [ $B1 -gt $C1 ]; then
         HIGH_VER=$BASE_VER
       else
-        if [ $B1 > $A1 ]; then
+        if [ $C1 -gt $B1 ]; then
           HIGH_VER=$CURR_VER
         else
-          if [ $A2 > $B2 ]; then
+          if [ $B2 -gt $C2 ]; then
             HIGH_VER=$BASE_VER
           else
-            if [ $B2 > $A2 ]; then
+            if [ $C2 -gt $B2 ]; then
               HIGH_VER=$CURR_VER
             else
-              if [ $A3 > $B3 ]; then
+              if [ $B3 -gt $C3 ]; then
                 HIGH_VER=$BASE_VER
               else
                 HIGH_VER=$CURR_VER
