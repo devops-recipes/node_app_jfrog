@@ -25,7 +25,6 @@ get_max_ver_temp: &get_max_ver
                 HIGH_VER=$BASE_VER
               else
                   HIGH_VER=$CURR_VER
-                fi
               fi
             fi
           fi
