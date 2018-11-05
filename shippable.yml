@@ -32,7 +32,8 @@ build:
   ci:
     # npm mirrors can sometimes be flacky, better to use shippable_retry
     # http://docs.shippable.com/ci/advancedOptions/retry/
-    - shipctl retry "npm install"
+#    - shipctl retry "npm install"
+    - npm install
     - mkdir -p $TEST_RESULTS_DIR && mkdir -p $CODE_COVERAGE_DIR
     - pushd $TESTS_LOC_DIR
     - $MOD_LOC/mocha --recursive "$TESTS_LOC_DIR/**/*.spec.js" -R mocha-junit-reporter --reporter-options mochaFile=$TEST_RESULTS_DIR/testresults.xml
