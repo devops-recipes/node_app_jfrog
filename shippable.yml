@@ -44,7 +44,7 @@ build:
   # http://docs.shippable.com/ci/shippableyml/#post_ci
   post_ci:
     - docker build -t $JFROG_ARTIFACTORY_REG/$JFROG_ARTIFACTORY_IMG:$BRANCH.$BUILD_NUMBER .
-    - docker push $JFROG_ARTIFACTORY_REG/$JFROG_ARTIFACTORY_IMG:$BRANCH.$BUILD_NUMBER
+    - if [ "$IS_PULL_REQUEST" != true ]; then docker push $DOCKER_ACC/$DOCKER_REPO:$BRANCH.$BUILD_NUMBER; fi
 
   #this will be ignored if you are not using Assembly Lines to trigger another job after ci
   on_success:
@@ -59,6 +59,16 @@ resources:
       sourceName: "hendrix-docker-local.jfrog.io/node_app" # replace with your Hub URL
       versionName: latest
 
+  - name: base_ver
+    type: version
+    versionTemplate:
+      versionName: "0.0.0"
+
+  - name: curr_ver
+    type: version
+    versionTemplate:
+      versionName: "tbd"
+
 jobs:
   - name: node_app_jfrog_runCI
     type: runCI
@@ -69,3 +79,45 @@ jobs:
     flags:
       - jfrog
       - docker
+
+  - name: bump_minor
+    type: runSh
+    steps:
+      - IN: base_ver
+      - TASK:
+          name: plus_minor
+          script:
+            - BASE_VER=$(shipctl get_resource_version_key base_ver versionName)
+            - NEW_VERSION="$(shipctl bump_version $BASE_VER minor)"
+      - OUT: curr_ver
+    on_success:
+      script:
+        - shipctl put_resource_state_multi "curr_ver" "versionName=$NEW_VERSION"
+
+  - name: bump_patch
+    type: runSh
+    steps:
+      - IN: base_ver
+      - TASK:
+          name: plus_minor
+          script:
+            - BASE_VER=$(shipctl get_resource_version_key base_ver versionName)
+            - NEW_VERSION="$(shipctl bump_version $BASE_VER patch)"
+      - OUT: curr_ver
+    on_success:
+      script:
+        - shipctl put_resource_state_multi "curr_ver" "versionName=$NEW_VERSION"
+
+  - name: bump_major
+    type: runSh
+    steps:
+      - IN: base_ver
+      - TASK:
+          name: plus_minor
+          script:
+            - BASE_VER=$(shipctl get_resource_version_key base_ver versionName)
+            - NEW_VERSION="$(shipctl bump_version $BASE_VER major)"
+      - OUT: curr_ver
+    on_success:
+      script:
+        - shipctl put_resource_state_multi "curr_ver" "versionName=$NEW_VERSION"
