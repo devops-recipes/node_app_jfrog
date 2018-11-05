@@ -2,9 +2,9 @@ get_max_ver_temp: &get_max_ver
   - |
       BASE_VER=$(shipctl get_resource_version_key base_ver versionName)
       CURR_VER=$(shipctl get_resource_version_key curr_ver versionName)
-      A1="$(cut -d'.' -f1 <<< $VER )"
-      A2="$(cut -d'.' -f2 <<< $VER )"
-      A3="$(cut -d'.' -f3 <<< $VER )"
+      A1="$(cut -d'.' -f1 <<< $BASE_VER )"
+      A2="$(cut -d'.' -f2 <<< $BASE_VER )"
+      A3="$(cut -d'.' -f3 <<< $BASE_VER )"
       B1="$(cut -d'.' -f1 <<< $CURR_VER )"
       B2="$(cut -d'.' -f2 <<< $CURR_VER )"
       B3="$(cut -d'.' -f3 <<< $CURR_VER )"
