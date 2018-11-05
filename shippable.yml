@@ -78,7 +78,11 @@ build:
     - BASE_VER=$(shipctl get_resource_version_key curr_ver versionName)
     - CURR_VER=$(shipctl get_resource_version_key node_app_img_jf versionName)
     - *get_max_ver
-    - NEW_VERSION="$(shipctl bump_version $CURR_VER beta)"
+    - NEW_VERSION="$(shipctl bump_version $HIGH_VER beta)"
+    - echo $BASE_VER
+    - echo $CURR_VER
+    - echo $HIGH_VER
+    - echo $NEW_VERSION
   # http://docs.shippable.com/ci/shippableyml/#post_ci
   post_ci:
     - docker build -t $JFROG_ARTIFACTORY_REG/$JFROG_ARTIFACTORY_IMG:$NEW_VERSION .
