@@ -135,7 +135,7 @@ jobs:
           name: plus_minor
           script:
             - *get_max_ver
-            - NEW_VERSION="$(shipctl bump_version $BASE_VER patch)"
+            - NEW_VERSION="$(shipctl bump_version $HIGH_VER patch)"
       - OUT: curr_ver
     on_success:
       script:
@@ -149,7 +149,7 @@ jobs:
           name: plus_minor
           script:
             - *get_max_ver
-            - NEW_VERSION="$(shipctl bump_version $BASE_VER major)"
+            - NEW_VERSION="$(shipctl bump_version $HIGH_VER major)"
       - OUT: curr_ver
     on_success:
       script:
