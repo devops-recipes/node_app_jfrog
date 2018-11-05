@@ -78,7 +78,7 @@ build:
   # http://docs.shippable.com/ci/shippableyml/#post_ci
   post_ci:
     - docker build -t $JFROG_ARTIFACTORY_REG/$JFROG_ARTIFACTORY_IMG:$BRANCH.$BUILD_NUMBER .
-    - if [ "$IS_PULL_REQUEST" != true ]; then docker push $DOCKER_ACC/$DOCKER_REPO:$BRANCH.$BUILD_NUMBER; fi
+    - if [ "$IS_PULL_REQUEST" != true ]; then docker push $JFROG_ARTIFACTORY_REG/$JFROG_ARTIFACTORY_IMG:$BRANCH.$BUILD_NUMBER; fi
 
   #this will be ignored if you are not using Assembly Lines to trigger another job after ci
   on_success:
