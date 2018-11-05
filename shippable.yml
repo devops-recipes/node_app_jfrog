@@ -122,10 +122,6 @@ jobs:
           script:
             - *get_max_ver
             - NEW_VERSION="$(shipctl bump_version $HIGH_VER minor)"
-            - echo $BASE_VER
-            - echo $CURR_VER
-            - echo $HIGH_VER
-            - echo $NEW_VERSION
       - OUT: curr_ver
     on_success:
       script:
@@ -138,7 +134,7 @@ jobs:
       - TASK:
           name: plus_minor
           script:
-            - BASE_VER=$(shipctl get_resource_version_key base_ver versionName)
+            - *get_max_ver
             - NEW_VERSION="$(shipctl bump_version $BASE_VER patch)"
       - OUT: curr_ver
     on_success:
@@ -152,9 +148,7 @@ jobs:
       - TASK:
           name: plus_minor
           script:
-            - CURR_VER=$(shipctl get_resource_version_key curr_ver versionName)
-            - BASE_VER=$(shipctl get_resource_version_key base_ver versionName)
-            -
+            - *get_max_ver
             - NEW_VERSION="$(shipctl bump_version $BASE_VER major)"
       - OUT: curr_ver
     on_success:
