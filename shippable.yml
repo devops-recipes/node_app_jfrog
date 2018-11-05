@@ -7,7 +7,7 @@ integrations:
   # adding JFrog artifactory integration so that credentials are available to CI Job
   # http://docs.shippable.com/platform/integration/jfrog-artifactoryKey/#jfrog-artifactory-integration
   hub:
-    - integrationName: drship_jf_docker
+    - integrationName: docker_repo
       type: dockerRegistryLogin
 
 # use this to control what branches get built.
@@ -24,8 +24,8 @@ env:
     - CODE_COVERAGE_DIR=$SHIPPABLE_REPO_DIR/shippable/codecoverage
     - TESTS_LOC_DIR=$SHIPPABLE_REPO_DIR/tests
     - MOD_LOC=$SHIPPABLE_REPO_DIR/node_modules/.bin/
-    - JFROG_ARTIFACTORY_IMG="node_app_jfrog"
-    - JFROG_ARTIFACTORY_REG=devopsrecipes-dr.jfrog.io # {account name}
+    - JFROG_ARTIFACTORY_IMG="node_app"
+    - JFROG_ARTIFACTORY_REG=hendrix-docker-local.jfrog.io # {account name}
 
 build:
   # http://docs.shippable.com/ci/shippableyml/#ci
@@ -53,9 +53,9 @@ build:
 resources:
   - name: node_app_img_jf
     type: image
-    integration: drship_jf_docker # replace with your integration name
+    integration: docker_repo # replace with your integration name
     versionTemplate:
-      sourceName: "devopsrecipes-dr.jfrog.io/node_app_jfrog" # replace with your Hub URL
+      sourceName: "hendrix-docker-local.jfrog.io/node_app" # replace with your Hub URL
       versionName: latest
 
 jobs:
