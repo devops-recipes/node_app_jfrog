@@ -9,19 +9,19 @@ get_max_ver_temp: &get_max_ver
       B2="$(cut -d'.' -f2 <<< $CURR_VER )"
       B3="$(cut -d'.' -f3 <<< $CURR_VER )"
 
-      if [ $A1 -gt $B1 ]; then
+      if [ $A1 > $B1 ]; then
         HIGH_VER=$BASE_VER
       else
-        if [ $B1 -gt $A1 ]; then
+        if [ $B1 > $A1 ]; then
           HIGH_VER=$CURR_VER
         else
-          if [ $A2 -gt $B2 ]; then
+          if [ $A2 > $B2 ]; then
             HIGH_VER=$BASE_VER
           else
-            if [ $B2 -gt $A2 ]; then
+            if [ $B2 > $A2 ]; then
               HIGH_VER=$CURR_VER
             else
-              if [ $A3 -gt $B3 ]; then
+              if [ $A3 > $B3 ]; then
                 HIGH_VER=$BASE_VER
               else
                   HIGH_VER=$CURR_VER
