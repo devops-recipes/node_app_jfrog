@@ -68,7 +68,6 @@ build:
   ci:
     # npm mirrors can sometimes be flacky, better to use shippable_retry
     # http://docs.shippable.com/ci/advancedOptions/retry/
-#    - shipctl retry "npm install"
     - npm install
     - mkdir -p $TEST_RESULTS_DIR && mkdir -p $CODE_COVERAGE_DIR
     - pushd $TESTS_LOC_DIR
@@ -96,7 +95,7 @@ resources:
     integration: docker_repo # replace with your integration name
     versionTemplate:
       sourceName: "hendrix-docker-local.jfrog.io/node_app" # replace with your Hub URL
-      versionName: latest
+      versionName: "0.0.0"
 
   - name: base_ver
     type: version
