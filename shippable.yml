@@ -1,3 +1,47 @@
+set_ver_temp: &set_ver
+  - |
+      BASE_VER=$(shipctl get_resource_version_key base_ver versionName)
+      CURR_VER=$(shipctl get_resource_version_key curr_ver versionName)
+
+get_max_ver_temp: &get_max_ver
+  - |
+      B1="$(cut -d'.' -f1 <<< $BASE_VER )"
+      B2="$(cut -d'.' -f2 <<< $BASE_VER )"
+      B3="$(cut -d'.' -f3 <<< $BASE_VER )"
+      C1="$(cut -d'.' -f1 <<< $CURR_VER )"
+      C2="$(cut -d'.' -f2 <<< $CURR_VER )"
+      C3="$(cut -d'.' -f3 <<< $CURR_VER )"
+
+      if [ $B1 -gt $C1 ]; then
+        HIGH_VER=$BASE_VER
+      else
+        if [ $C1 -gt $B1 ]; then
+          HIGH_VER=$CURR_VER
+        else
+          if [ $B2 -gt $C2 ]; then
+            HIGH_VER=$BASE_VER
+          else
+            if [ $C2 -gt $B2 ]; then
+              HIGH_VER=$CURR_VER
+            else
+              if [ $B3 -gt $C3 ]; then
+                HIGH_VER=$BASE_VER
+              else
+                HIGH_VER=$CURR_VER
+              fi
+            fi
+          fi
+        fi
+      fi
+
+
+
+
+
+
+
+
+
 # Language setting http://docs.shippable.com/ci/languages/node/
 language: node_js
 
@@ -132,39 +176,3 @@ jobs:
       script:
         - shipctl put_resource_state_multi "curr_ver" "versionName=$NEW_VERSION"
 
-
-set_ver_temp: &set_ver
-  - |
-      BASE_VER=$(shipctl get_resource_version_key base_ver versionName)
-      CURR_VER=$(shipctl get_resource_version_key curr_ver versionName)
-
-get_max_ver_temp: &get_max_ver
-  - |
-      B1="$(cut -d'.' -f1 <<< $BASE_VER )"
-      B2="$(cut -d'.' -f2 <<< $BASE_VER )"
-      B3="$(cut -d'.' -f3 <<< $BASE_VER )"
-      C1="$(cut -d'.' -f1 <<< $CURR_VER )"
-      C2="$(cut -d'.' -f2 <<< $CURR_VER )"
-      C3="$(cut -d'.' -f3 <<< $CURR_VER )"
-
-      if [ $B1 -gt $C1 ]; then
-        HIGH_VER=$BASE_VER
-      else
-        if [ $C1 -gt $B1 ]; then
-          HIGH_VER=$CURR_VER
-        else
-          if [ $B2 -gt $C2 ]; then
-            HIGH_VER=$BASE_VER
-          else
-            if [ $C2 -gt $B2 ]; then
-              HIGH_VER=$CURR_VER
-            else
-              if [ $B3 -gt $C3 ]; then
-                HIGH_VER=$BASE_VER
-              else
-                HIGH_VER=$CURR_VER
-              fi
-            fi
-          fi
-        fi
-      fi
