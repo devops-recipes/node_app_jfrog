@@ -69,7 +69,7 @@ env:
     - TESTS_LOC_DIR=$SHIPPABLE_REPO_DIR/tests
     - MOD_LOC=$SHIPPABLE_REPO_DIR/node_modules/.bin/
     - JFROG_ARTIFACTORY_IMG="node_app"
-    - JFROG_ARTIFACTORY_REG=hendrix-docker-local.jfrog.io # {account name}
+    - JFROG_ARTIFACTORY_REG=demoship-docker-local.jfrog.io # {account name}
 
 build:
   # http://docs.shippable.com/ci/shippableyml/#ci
