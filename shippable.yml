@@ -106,7 +106,7 @@ resources:
     type: image
     integration: docker_repo # replace with your integration name
     versionTemplate:
-      sourceName: "hendrix-docker-local.jfrog.io/node_app" # replace with your Hub URL
+      sourceName: "demoship-docker-local.jfrog.io/node_app" # replace with your Hub URL
       versionName: "0.0.0"
 
   - name: base_ver
